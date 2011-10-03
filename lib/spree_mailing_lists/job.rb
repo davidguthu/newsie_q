@@ -2,6 +2,7 @@ require 'resque'
 
 module SpreeMailingLists
   class Job
+    @queue = :spree_mailing_lists_job
 
     class << self
       
