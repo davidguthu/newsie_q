@@ -26,16 +26,6 @@ describe NewsieQ::Job do
     end
   end
   
-  describe "mailing_list_id" do
-    let(:mailing_list) { 'customer' }
-    after { NewsieQ::Job.mailing_list_id(mailing_list) }
-    
-    it "should convert string to symbol" do
-      mailing_list.should_receive(:to_sym)
-    end
-    
-  end
-  
   describe "subscribe_to_mailing_list" do
     let(:client) { mock }
     before do

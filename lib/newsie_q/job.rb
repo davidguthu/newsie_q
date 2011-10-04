@@ -15,7 +15,7 @@ module NewsieQ
       end
     
       def mailing_list_id(mailing_list)
-        NewsieQ::Mailchimp.mailing_lists[mailing_list.to_sym]
+        NewsieQ::Mailchimp.mailing_lists[mailing_list]
       end
   
       def subscribe_to_mailing_list(mailing_list_id, email)
