@@ -1,75 +1,53 @@
+# encoding: utf-8
+
 require 'rubygems'
+require 'bundler'
+begin
+  Bundler.setup(:default, :development)
+rescue Bundler::BundlerError => e
+  $stderr.puts e.message
+  $stderr.puts "Run `bundle install` to install missing gems"
+  exit e.status_code
+end
 require 'rake'
+
+require 'jeweler'
+Jeweler::Tasks.new do |gem|
+  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
+  gem.name = "newsie_q"
+  gem.homepage = "http://github.com/evanwhalen/newsie_q"
+  gem.license = "MIT"
+  gem.summary = %Q{TODO: one-line summary of your gem}
+  gem.description = %Q{TODO: longer description of your gem}
+  gem.email = "evanwhalen@gmail.com"
+  gem.authors = ["Evan Whalen"]
+  # dependencies defined in Gemfile
+end
+Jeweler::RubygemsDotOrgTasks.new
+
 require 'rake/testtask'
-require 'rake/packagetask'
-require 'rake/gempackagetask'
-
-gemfile = File.expand_path('../spec/test_app/Gemfile', __FILE__)
-if File.exists?(gemfile) && (%w(spec cucumber).include?(ARGV.first.to_s) || ARGV.size == 0)
-  require 'bundler'
-  ENV['BUNDLE_GEMFILE'] = gemfile
-  Bundler.setup
-
-  require 'rspec'
-  require 'rspec/core/rake_task'
-  RSpec::Core::RakeTask.new
-
-  require 'cucumber/rake/task'
-  Cucumber::Rake::Task.new do |t|
-    t.cucumber_opts = %w{--format progress}
-  end
+Rake::TestTask.new(:test) do |test|
+  test.libs << 'lib' << 'test'
+  test.pattern = 'test/**/test_*.rb'
+  test.verbose = true
 end
 
-desc "Default Task"
-task :default => [:spec, :cucumber ]
-
-spec = eval(File.read('spree_mailing_lists.gemspec'))
-
-Rake::GemPackageTask.new(spec) do |p|
-  p.gem_spec = spec
+require 'rcov/rcovtask'
+Rcov::RcovTask.new do |test|
+  test.libs << 'test'
+  test.pattern = 'test/**/test_*.rb'
+  test.verbose = true
+  test.rcov_opts << '--exclude "gems/*"'
 end
 
-desc "Release to gemcutter"
-task :release => :package do
-  require 'rake/gemcutter'
-  Rake::Gemcutter::Tasks.new(spec).define
-  Rake::Task['gem:push'].invoke
-end
+task :default => :test
 
-desc "Default Task"
-task :default => [ :spec ]
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  version = File.exist?('VERSION') ? File.read('VERSION') : ""
 
-desc "Regenerates a rails 3 app for testing"
-task :test_app do
-  require '../spree/lib/generators/spree/test_app_generator'
-  class SpreeMailingListTestAppGenerator < Spree::Generators::TestAppGenerator
-
-    def install_gems
-      inside "test_app" do
-        run 'bundle exec rake spree_core:install'
-        run 'bundle exec rake spree_mailing_lists:install'
-      end
-    end
-
-    def migrate_db
-      run_migrations
-    end
-
-    protected
-    def full_path_for_local_gems
-      <<-gems
-gem 'spree_core', :path => \'#{File.join(File.dirname(__FILE__), "../spree/", "core")}\'
-gem 'spree_mailing_lists', :path => \'#{File.dirname(__FILE__)}\'
-      gems
-    end
-
-  end
-  SpreeMailingListTestAppGenerator.start
-end
-
-namespace :test_app do
-  desc 'Rebuild test and cucumber databases'
-  task :rebuild_dbs do
-    system("cd spec/test_app && bundle exec rake db:drop db:migrate RAILS_ENV=test && rake db:drop db:migrate RAILS_ENV=cucumber")
-  end
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "newsie_q #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end

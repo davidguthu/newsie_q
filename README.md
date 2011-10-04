@@ -1,4 +1,4 @@
-SpreeMailingLists
+NewsieQ
 =================
 
 Introduction goes here.

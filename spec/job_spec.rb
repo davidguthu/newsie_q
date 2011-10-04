@@ -2,19 +2,19 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 MAILING_LISTS = { :customer => '1', :merchandiser => '2' }
 
-describe SpreeMailingLists::Job do
-  let(:job) { SpreeMailingLists::Job }
+describe NewsieQ::Job do
+  let(:job) { NewsieQ::Job }
   let(:email) { Faker::Internet.email }
-  let(:mailing_list_id) { ActiveSupport::SecureRandom.hex(5) }
+  let(:mailing_list_id) { 'f80ai25uox' }
   let(:mailing_list) { :mailing_list }
   let(:mailing_lists) { MAILING_LISTS }
-  before { SpreeMailingLists::Mailchimp.mailing_lists = MAILING_LISTS }
+  before { NewsieQ::Mailchimp.mailing_lists = MAILING_LISTS }
   
   describe "subscribe" do
     after { job.subscribe(mailing_list, email) }
   
     it "should enqueue" do
-      Resque.should_receive(:enqueue).with(SpreeMailingLists::Job, mailing_list, email)
+      Resque.should_receive(:enqueue).with(NewsieQ::Job, mailing_list, email)
     end    
   end
 
@@ -30,7 +30,7 @@ describe SpreeMailingLists::Job do
     let(:client) { mock }
     before do
       client.stub(:list_subscribe => true)
-      SpreeMailingLists::Mailchimp.stub(:api_client => client)
+      NewsieQ::Mailchimp.stub(:api_client => client)
     end
     after { job.subscribe_to_mailing_list(mailing_list_id, email) }
     

@@ -4,7 +4,7 @@ SimpleCov.start
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 require 'rspec'
-require 'spree_mailing_lists'
+require 'newsie_q'
 require 'faker'
 
 # Requires supporting files with custom matchers and macros, etc,
