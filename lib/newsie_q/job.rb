@@ -19,7 +19,7 @@ module NewsieQ
       end
   
       def subscribe_to_mailing_list(mailing_list_id, email)
-        NewsieQ::Mailchimp.api_client.list_subscribe(mailing_list_id, email, {}, 'html', false)
+        NewsieQ::Mailchimp.api_client.list_subscribe(mailing_list_id, email, {}, 'html', false, true)
       end
       
     end
